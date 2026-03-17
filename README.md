@@ -3,12 +3,19 @@
 
 ### 项目目录
 ├── README.md
-├── app.json  #开发者配置文件
+├── app.json  #开发者配置文件（本地使用，不建议提交到公开仓库）
+├── app.example.json  #示例配置文件（可提交）
 ├── node_modules
 ├── package.json
 ├── src #源代码目录
 ├── tsconfig.json #ts配置
 └── webpack.config.js #构建工具
+
+### app.json 配置
+首次运行前，从示例配置拷贝一份本地配置：
+```
+cp app.example.json app.json
+```
 
 ### 安装依赖
 ```

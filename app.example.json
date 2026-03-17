@@ -1,0 +1,15 @@
+{
+  "manifestVersion": 1,
+  "appID": "YOUR_APP_ID",
+  "appType": "docs-addon",
+  "blockTypeID": "YOUR_BLOCK_TYPE_ID",
+  "projectName": "Interaction",
+  "contributes": {
+    "addPanel": {
+      "initialHeight": 400,
+      "useInteraction": true,
+      "view": "index.html"
+    }
+  },
+  "url": "YOUR_DOC_URL"
+}
