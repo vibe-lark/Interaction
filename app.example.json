@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
-  "appID": "YOUR_APP_ID",
+  "appID": "cli_xxxxxxxxxxxxxxxx",
   "appType": "docs-addon",
-  "blockTypeID": "YOUR_BLOCK_TYPE_ID",
+  "blockTypeID": "blk_xxxxxxxxxxxxxxxx",
   "projectName": "Interaction",
   "contributes": {
     "addPanel": {
@@ -11,5 +11,5 @@
       "view": "index.html"
     }
   },
-  "url": "YOUR_DOC_URL"
+  "url": "https://example.com"
 }
