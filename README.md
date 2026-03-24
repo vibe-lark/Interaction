@@ -1,7 +1,11 @@
 # Interaction（飞书 Docs Add-on）
 
-> **🤖 提示：推荐使用 Trae AI 快速启动**
-> 提交使用 **Trae IDE**，你可以直接在对话框中发送 **“帮我按照 README 的说明把这个项目跑起来，我的飞书文档测试链接是：[你的文档链接]”**，Trae 将会自动为你完成所有环境配置、依赖安装和启动服务。
+> **🤖 Trae AI 使用指南**
+> 本项目完美支持使用 **Trae IDE** 进行全自动化构建与调试。
+> **如果你是开发者**：无需手动敲击繁琐的终端命令，你只需将本 `README.md` 的内容（或 GitHub 链接）提供给 Trae，并附上你的测试参数，Trae 就能自主阅读并完成从拉取代码到启动调试的全套工作。
+> 
+> **参考提示词（发给 Trae）：**
+> *"请阅读这篇项目文档，理解 Docs Add-on 的本地开发流程。请帮我全自动完成代码拉取、环境准备和配置。我用于测试的飞书文档链接是 [文档链接]。我的 appID 是 [appID]（如果没有请通过 opdev 自动创建），blockTypeID 是 [blockTypeID]。请直接帮我跑起来。"*
 
 用于在飞书文档内创建互动组件（投票 / 讨论 / 词云 / 排名等）的示例项目。
 
@@ -23,29 +27,50 @@
 
 > **💡 版本匹配提示**：全局 `opdev >= 3.3.0` 需搭配本项目中的 `@lark-opdev/block-docs-addon-webpack-utils >= 1.0.0`，否则运行时可能报错。
 
+---
+
 ## 快速开始（本地调试）
 
-要让本项目跑起来并能插入小组件，需要先通过官方流程创建测试应用并获取 `app.json` 配置。
+要让本项目跑起来并能插入小组件，核心是需要一个包含真实应用信息的 `app.json` 配置文件。请根据你的实际情况选择以下两种方式之一：
 
-**1. 生成测试应用配置 (app.json)**
-在本项目外通过官方 CLI 创建一个临时工程（选择 `docs-addon`），系统会自动创建测试应用并生成 `app.json`：
-```bash
-opdev create demo
-```
+### 方式一：我已经有现成的小组件应用了（推荐）
+如果你已经在飞书开发者后台创建过 Docs Add-on 应用，或者已经有可用的 `appID`：
 
-**2. 获取本项目代码并配置 app.json**
-```bash
-git clone git@github.com:vibe-lark/Interaction.git
-cd Interaction
+1. **获取代码并创建配置**：
+   ```bash
+   git clone git@github.com:vibe-lark/Interaction.git
+   cd Interaction
+   cp app.example.json app.json
+   ```
+2. **填写关键信息**：打开刚复制出来的 `app.json`，将其中的 `appID` 和 `blockTypeID` 替换为你自己的真实信息；将 `url` 字段替换为你**用于测试的真实飞书云文档链接**（例如：`https://bytedance.larkoffice.com/docx/xxxx`）。
 
-# 将上一步生成的 app.json 拷贝到本项目根目录
-cp ../demo/app.json ./app.json 
-```
-**【关键步骤】**：打开拷贝过来的 `app.json`，将其中的 `url` 字段修改为您**用于测试的真实飞书云文档链接**（例如：`https://bytedance.larkoffice.com/docx/xxxx`）。
+---
 
-*(注意：`app.json` 包含开发者的真实应用信息，仅限本地调试使用，请勿提交到代码仓库。可参考 `app.example.json` 了解字段含义。)*
+### 方式二：我还没有小组件应用，需要从零开始
+如果你是第一次接触，可以利用官方 CLI 的 `create` 命令，它会**自动在飞书后台为你创建一个真实的测试应用**，并生成配套的 `app.json`。
 
-**3. 安装依赖与启动**
+1. **生成自动配置**：在本项目外通过官方 CLI 创建一个临时工程（选择 `docs-addon` 且同意自动创建新应用）：
+   ```bash
+   opdev create demo -a docs-addon
+   ```
+   *（执行成功后，终端会打印出类似 `https://open.feishu.cn/app/cli_...` 的控制台链接，你可以点击该链接去飞书后台查看刚自动创建好的小组件信息。）*
+2. **获取代码并“借用”配置**：
+   ```bash
+   git clone git@github.com:vibe-lark/Interaction.git
+   cd Interaction
+   
+   # 将刚才自动生成的 app.json 拷贝到本项目根目录
+   cp ../demo/app.json ./app.json 
+   ```
+3. **填写测试链接**：打开拷贝过来的 `app.json`，将其中的 `url` 字段修改为您**用于测试的真实飞书云文档链接**。
+
+---
+
+### 启动开发
+
+*(注意：`app.json` 包含开发者的真实应用信息，仅限本地调试使用，请勿提交到代码仓库。)*
+
+**1. 安装依赖与启动**
 ```bash
 npm install
 npm run start
