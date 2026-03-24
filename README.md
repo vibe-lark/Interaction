@@ -5,63 +5,36 @@
 https://open.larkoffice.com/document/client-docs/docs-add-on/03-cloud-document-widget-quick-developme
 
 ## 什么时候需要 clone 这个项目？
-你可以在以下两种时机 clone：
-- 你想基于本项目继续开发自己的 Docs Add-on（推荐直接 clone 本仓库作为起点）
-- 你已经用官方 demo 验证过本机环境（opdev 登录、能打开测试页面），现在需要开始做真实功能开发
+结论：你可以随时 clone 下来阅读/改代码；但要“跑起来并能插入小组件”，需要先在开放平台创建测试应用（官方流程通常会在创建工程时自动创建并生成 `app.json`）。
 
-如果你还没安装/登录 opdev，建议先按下文“环境准备”完成一次 `opdev login`；但不必等到所有绑定都完成才 clone，本仓库可以先 clone 下来再去开放平台创建应用并补齐 `app.json`。
+### 使用步骤：先按官方流程创建测试应用，再使用本仓库代码
+适合：第一次接触 Docs Add-on，或你希望完全按官方链路走通调试/上传/发布。
 
-### 路线 A：直接 clone 本仓库（推荐）
-适合：你已经确认要在此项目上做开发，愿意边绑平台边跑通环境。
-
-1. clone 并安装依赖
+1. 环境准备并登录（按下文“环境准备”执行 `opdev login`）
+2. 创建官方示例工程（选择 `docs-addon`），系统会自动创建测试应用并生成 `app.json`
+```
+opdev create demo
+```
+3. clone 本仓库代码
 ```
 git clone git@github.com:vibe-lark/Interaction.git
 cd Interaction
+```
+4. 把上一步官方工程生成的 `app.json` 拷贝到本仓库根目录（仅本地使用，不提交 GitHub）
+例如（假设 `demo/` 与 `Interaction/` 在同一父目录）：
+```
+cp ../demo/app.json ./app.json
+```
+5. 安装依赖并启动
+```
 npm install
-```
-
-2. 安装并登录 opdev
-```
-npm install @lark-opdev/cli@latest -g
-opdev login
-```
-
-3. 在开放平台创建应用并开启 Docs Add-on，拿到 `appID / blockTypeID`，并复制系统提供的“测试页面/调试文档”链接
-
-4. 生成本地 app.json（不提交 GitHub）
-```
-cp app.example.json app.json
-```
-填好 `appID / blockTypeID / url`
-
-5. 启动开发并在文档里插入小组件验证
-```
 npm run start
 ```
-打开 `url` 对应的测试页面/调试文档，在插入菜单中插入小组件（名称通常是 `blockTypeID`）。
-
-6. 需要发布时上传
+6. 打开 `app.json` 里的测试页面/调试文档链接，在文档里插入小组件验证（本地小组件名称通常是 `blockTypeID`）
+7. 需要发布时上传并到后台创建版本发布
 ```
 npm run upload
 ```
-然后去开放平台后台创建版本并提交发布申请。
-
-### 路线 B：先用官方 demo 验证环境，再 clone 本仓库
-适合：你担心本机环境/opdev/账号权限有坑，希望先用最小示例排障。
-
-1. 创建并跑通官方 demo（只用于验环境）
-```
-opdev create demo
-cd demo
-npm install
-opdev login
-npm run start
-```
-确认：能打开系统提供的测试页面/调试文档，并能插入 demo 小组件。
-
-2. 环境验证通过后，clone 本仓库并按路线 A 的第 1/3/4/5/6 步继续
-（不要在 demo 上继续开发真实功能，后续迁移成本高）
 
 ## 目录结构
 ├── README.md
@@ -99,30 +72,6 @@ opdev login
 ```
 按提示在浏览器登录并选择开发环境（Feishu）。
 
-## 绑定到飞书开放平台（首次使用必做）
-这个仓库只提供代码，不会包含你的真实 `appID / blockTypeID / 文档 url`。因此任何人 clone 后，都需要先在开放平台创建/获取自己的绑定信息，再在本地生成 `app.json` 才能调试与上传。
-
-### 1. 在开放平台创建应用并开启 Docs Add-on 能力
-- 打开飞书开放平台控制台，创建一个应用
-- 在应用内开启「云文档小组件（Docs Add-on）」能力
-- 在控制台里获取（或创建后复制）以下信息：
-  - `appID`（形如 `cli_xxx`）
-  - `blockTypeID`（形如 `blk_xxx`）
-
-### 2. 获取用于调试的文档链接（通常由开放平台自动生成）
-- 在飞书开放平台的 Docs Add-on 相关页面里，会提供一个“测试页面/调试文档”的链接（用于插入并调试小组件），一般是系统自动生成的
-- 你也可以替换成自己有权限的飞书文档 URL 用于调试，但不建议把公司内部真实文档链接提交到公开仓库
-
-### 3. 生成本地 app.json（不提交 GitHub）
-在项目根目录执行：
-```
-cp app.example.json app.json
-```
-然后编辑 `app.json`，至少填好：
-- `appID`: 你的应用 ID
-- `blockTypeID`: 你的 blockTypeID
-- `url`: 你的调试文档 URL（推荐填写开放平台自动生成的测试文档链接）
-
 ## 快速开始（本地调试）
 ### 1. 安装依赖
 ```
@@ -132,12 +81,14 @@ npm install
 ### 2. 准备 app.json（本地配置，不提交 GitHub）
 本项目运行与上传依赖 `app.json`（包含开发者应用信息等），建议仅在本地维护，不提交到公开仓库。
 
-首次运行前，从示例配置拷贝一份本地配置并填写必要字段：
+建议按官方流程（`opdev create ...` 选择 `docs-addon`）先创建一个工程，让系统自动创建测试应用并生成 `app.json`，再把该 `app.json` 拷贝到本项目根目录使用。
+
+示例（假设官方工程目录名为 `demo` 且与本项目同级）：
 ```
-cp app.example.json app.json
+cp ../demo/app.json ./app.json
 ```
 
-字段说明（示例见 `app.example.json`）：
+字段说明（参考 `app.example.json`，仅用于字段含义说明）：
 - `appID`：飞书开发者后台创建的应用 ID
 - `blockTypeID`：组件/Block 的类型 ID
 - `url`：用于绑定/调试的文档 URL（不建议使用公司内部真实链接提交到公开仓库）
