@@ -13,7 +13,7 @@
 
 ## 环境准备
 
-1. **Node.js**: 请确保已安装 Node.js（推荐 LTS 版本）。
+1. **Node.js**: 请确保已安装 Node.js（推荐 LTS 版本，建议 18/20）。
 2. **飞书开发者工具 (opdev)**:
    ```bash
    npm install @lark-opdev/cli@latest -g
@@ -26,6 +26,8 @@
    按提示在浏览器中登录，并选择开发环境（Feishu）。
 
 > **💡 版本匹配提示**：全局 `opdev >= 3.3.0` 需搭配本项目中的 `@lark-opdev/block-docs-addon-webpack-utils >= 1.0.0`，否则运行时可能报错。
+>
+> **💡 本地调试提示**：本项目本地调试会依赖全局安装的 `opdev`（它包含部分内部依赖）。如果你发现 `npm run start` 没有打印 `[docverse-debug-url] URL:`，请先确认已全局安装并完成 `opdev login`。
 
 ---
 
@@ -76,10 +78,11 @@ npm install
 npm run start
 ```
 
-**4. 在飞书云文档中调试**
+**2. 在飞书云文档中调试**
 - 执行 `npm run start` 后，留意控制台输出的一行特殊链接：`[docverse-debug-url] URL: https://您的文档链接?blockitdebug=true&debugport=8080`。
 - 复制并在浏览器中打开这个带有 `blockitdebug=true` 参数的链接进入云文档。
-- 在文档空白处，唤出插入菜单（输入 `/`），搜索您的小组件名称（或 `blockTypeID`），将其插入文档。
+- 在文档空白处，唤出插入菜单（输入 `/`），优先搜索您的小组件名称将其插入文档（部分场景不支持用 `blockTypeID` 搜索）。
+- 如果在带 `blockitdebug=true` 的页面里无法从 `/` 菜单插入，请先打开不带参数的普通文档链接插入一次，再回到调试链接刷新。
 - 此时云文档里运行的即为您本地的实时代码。在 IDE 中修改代码并保存，文档中的小组件会自动热更新（如遇 hooks 报错可刷新页面）。
 
 ## 上传与发布
@@ -103,10 +106,19 @@ npm run start
 
 - **为什么运行 / 调试时报错（如 `get lark session` 异常）？**
   优先检查全局 `opdev` 版本与项目依赖是否匹配，并确认是否已完成 `opdev login`。
+- **为什么 `npm run start` 没有打印 `[docverse-debug-url] URL:`？**
+  1. 确认已全局安装 `opdev` 且能在终端运行：`opdev login`。
+  2. 确认 `app.json` 存在且字段完整（`appID` / `blockTypeID` / `url`）。
 - **为什么在文档里无法插入小组件？**
   1. 确认已完成 `opdev login`。
   2. 确认 `app.json` 存在，且 `appID`、`blockTypeID`、`url` 填写正确。
   3. 确认你对 `url` 对应的文档有编辑权限。
+- **为什么 `opdev` 报错 `EPERM ... ~/.mpdev-cli/logs/run.YYYY-MM-DD.log`？**
+  尝试创建并预先生成当天日志文件（macOS 常见）：
+  ```bash
+  mkdir -p ~/.mpdev-cli/logs
+  touch ~/.mpdev-cli/logs/run.$(date +%F).log
+  ```
 - **为什么看不到 loading 状态？**
   项目内已提供基础 loading 样式；如未显示，可检查 `mode === 'loading'` 与 `busy.show` 逻辑是否被覆盖。
 - **关于安全与国际化**

@@ -2,9 +2,9 @@
   "name": "docs-addon-app",
   "version": "0.0.1",
   "scripts": {
-    "start": "cross-env NODE_ENV=development NODE_PATH=\"$(npm prefix -g)/lib/node_modules/@lark-opdev/cli/node_modules\" webpack-dev-server --mode development",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --mode development",
     "build": "cross-env NODE_ENV=production webpack --mode production",
-    "upload": "npm run build && \"$(npm prefix -g)/bin/opdev\" upload ./dist"
+    "upload": "npm run build && node -e \"const cp=require('child_process');const fs=require('fs');const path=require('path');let prefix='';try{prefix=cp.execSync('npm prefix -g',{stdio:['ignore','pipe','ignore']}).toString().trim()}catch(e){};const candidates=[path.join(prefix,'bin','opdev'),path.join(prefix,'bin','opdev.cmd'),path.join(prefix,'node_modules','.bin','opdev'),path.join(prefix,'node_modules','.bin','opdev.cmd'),path.join(prefix,'lib','node_modules','.bin','opdev'),path.join(prefix,'lib','node_modules','.bin','opdev.cmd')];const opdev=candidates.find(p=>p&&fs.existsSync(p));if(!opdev){console.error('opdev not found in global npm prefix. Please run: npm i -g @lark-opdev/cli');process.exit(1);}const r=cp.spawnSync(opdev,['upload','./dist'],{stdio:'inherit'});process.exit(r.status==null?1:r.status);\""
   },
   "dependencies": {
     "@lark-opdev/block-docs-addon-api": "^0.0.10",

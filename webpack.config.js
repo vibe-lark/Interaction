@@ -1,11 +1,40 @@
 const path = require('path');
 const fs = require('fs');
+const { execSync } = require('child_process');
+const Module = require('module');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ESBuildMinifyPlugin } = require('esbuild-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackBar = require('webpackbar');
 const webpack = require('webpack');
+
+function tryAddGlobalOpdevCliNodeModulesToNodePath() {
+  let prefix = '';
+  try {
+    prefix = execSync('npm prefix -g', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim();
+  } catch (e) {}
+  if (!prefix) return;
+
+  const candidates = [
+    path.join(prefix, 'lib', 'node_modules', '@lark-opdev', 'cli', 'node_modules'),
+    path.join(prefix, 'node_modules', '@lark-opdev', 'cli', 'node_modules'),
+  ].filter((p) => fs.existsSync(p));
+
+  if (candidates.length === 0) return;
+
+  const sep = process.platform === 'win32' ? ';' : ':';
+  const existing = (process.env.NODE_PATH || '').split(sep).filter(Boolean);
+  for (const p of candidates) {
+    if (!existing.includes(p)) existing.push(p);
+  }
+  process.env.NODE_PATH = existing.join(sep);
+  Module._initPaths();
+}
+
+tryAddGlobalOpdevCliNodeModulesToNodePath();
 
 const appJsonPath = path.resolve(process.cwd(), 'app.json');
 const appJsonContent = fs.readFileSync(appJsonPath, 'utf8');
