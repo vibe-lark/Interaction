@@ -1,9 +1,15 @@
 const path = require('path');
+const fs = require('fs');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ESBuildMinifyPlugin } = require('esbuild-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackBar = require('webpackbar');
+const webpack = require('webpack');
+
+const appJsonPath = path.resolve(process.cwd(), 'app.json');
+const appJsonContent = fs.readFileSync(appJsonPath, 'utf8');
+const appJson = JSON.parse(appJsonContent);
 let docsAddonDevMiddleware = async () => (req, res, next) => next();
 let docsAddonWebpackPlugin = class {
   apply() {}
@@ -16,6 +22,38 @@ try {
   if (process.env.NODE_ENV === 'production') {
     console.warn('[docs-addon] block-docs-addon-webpack-utils load failed, fallback to noop plugin');
   }
+  docsAddonWebpackPlugin = class {
+    constructor() {}
+    apply(compiler) {
+      if (process.env.NODE_ENV !== 'production') return;
+      compiler.hooks.compilation.tap('DocsAddonFallbackWebpackPlugin', (compilation) => {
+        compilation.hooks.processAssets.tap(
+          {
+            name: 'DocsAddonFallbackWebpackPlugin',
+            stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
+          },
+          () => {
+            const projectInfo = {
+              appid: appJson.appID,
+              projectname: appJson.projectName,
+              blocks: ['index'],
+            };
+            const initialHeight = appJson.initialHeight ?? appJson?.contributes?.addPanel?.initialHeight;
+            const blockInfo = {
+              blockTypeID: appJson.blockTypeID,
+              blockRenderType: 'offlineWeb',
+              offlineWebConfig: {
+                initialHeight,
+                contributes: appJson.contributes,
+              },
+            };
+            compilation.emitAsset('project.config.json', new webpack.sources.RawSource(JSON.stringify(projectInfo)));
+            compilation.emitAsset('index.json', new webpack.sources.RawSource(JSON.stringify(blockInfo)));
+          }
+        );
+      });
+    }
+  };
 }
 
 const cwd = process.cwd();
@@ -87,6 +125,7 @@ const config = {
       ? [new ReactRefreshWebpackPlugin(), new WebpackBar()]
       : [new MiniCssExtractPlugin()]),
     new docsAddonWebpackPlugin({
+      url: appJson.url
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',

@@ -2,9 +2,9 @@
   "name": "docs-addon-app",
   "version": "0.0.1",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack-dev-server --mode development",
+    "start": "cross-env NODE_ENV=development NODE_PATH=\"$(npm prefix -g)/lib/node_modules/@lark-opdev/cli/node_modules\" webpack-dev-server --mode development",
     "build": "cross-env NODE_ENV=production webpack --mode production",
-    "upload": "npm run build && opdev upload ./dist"
+    "upload": "npm run build && \"$(npm prefix -g)/bin/opdev\" upload ./dist"
   },
   "dependencies": {
     "@lark-opdev/block-docs-addon-api": "^0.0.10",
