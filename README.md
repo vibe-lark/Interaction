@@ -40,7 +40,7 @@
 
 1. **获取代码并创建配置**：
    ```bash
-   git clone https://github.com/vibe-lark/Interaction.git
+   git clone git@github.com:vibe-lark/Interaction.git
    cd Interaction
    cp app.example.json app.json
    ```
@@ -58,7 +58,7 @@
    *（执行成功后，终端会打印出类似 `https://open.feishu.cn/app/cli_...` 的控制台链接，你可以点击该链接去飞书后台查看刚自动创建好的小组件信息。）*
 2. **获取代码并“借用”配置**：
    ```bash
-   git clone https://github.com/vibe-lark/Interaction.git
+   git clone git@github.com:vibe-lark/Interaction.git
    cd Interaction
    
    # 将刚才自动生成的 app.json 拷贝到本项目根目录
